@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrueHire – Fake Job Post Detector</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <button class="menu-btn" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="menu-dropdown" id="menuDropdown">
+            <a href="/profile">Profile</a>
+            <button onclick="toggleTheme()">Toggle Light/Dark Mode</button>
+        </div>
+    </nav>
+    <div class="page-shell">
+        <header class="hero-card">
+            <div>
+                <p class="eyebrow">TrueHire</p>
+                <h1>Fake Job Post Detector</h1>
+                <p class="hero-copy">Paste any job description to identify suspicious wording, fraud indicators, and risk before you apply.</p>
+            </div>
+            <div class="hero-badge">Flask · Rule-based · Safe Screening</div>
+        </header>
+
+        <main class="grid-layout">
+            <section class="section-card detector-card">
+                <div class="section-header">
+                    <div>
+                        <p class="section-label">Fake Job Detector</p>
+                        <h2>Analyze a job posting</h2>
+                    </div>
+                    <span class="status-pill status-neutral">Easy & Secure</span>
+                </div>
+
+                <form method="post" class="input-form">
+                    <input type="hidden" name="form_type" value="analyze">
+                    <label>Employer / Company Name</label>
+                    <input type="text" name="company_name" placeholder="Enter company name" value="{{ company_name }}">
+                    <label>Job Description</label>
+                    <textarea name="job_description" rows="8" placeholder="Paste the job description text here">{{ job_description }}</textarea>
+                    <button type="submit" class="primary-btn">Analyze</button>
+                </form>
+
+                {% if analysis %}
+                <div class="result-card result-{{ analysis.risk|lower }}">
+                    <div class="result-header">
+                        <div>
+                            <p class="result-label">Risk Level</p>
+                            <h3>{{ analysis.risk }}</h3>
+                        </div>
+                        <div class="score-badge">{{ analysis.score }} / 100</div>
+                    </div>
+                    <div class="reason-list">
+                        <p class="reason-title">Reasons</p>
+                        <ul>
+                            {% for reason in analysis.reasons %}
+                                <li>{{ reason }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <p class="risk-warning">👉 “This job may be risky. Please verify before applying.”</p>
+                </div>
+                {% endif %}
+            </section>
+
+            <section class="section-card safe-jobs-card">
+                <div class="section-header">
+                    <div>
+                        <p class="section-label">Example Safe Jobs</p>
+                        <h2>Trusted role profiles</h2>
+                    </div>
+                </div>
+                <div class="job-grid">
+                    <article class="mini-card">
+                        <h3>Product Security Manager</h3>
+                        <p class="tag">Cybersecurity · SaaS</p>
+                        <p>Enterprise role with a verified company profile, detailed security scope, and clear benefits.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h3>Senior UX Researcher</h3>
+                        <p class="tag">Design · Agency</p>
+                        <p>Posted by an established consultancy with structured hiring details and recruiter contact information.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h3>Data Analyst</h3>
+                        <p class="tag">Analytics · Finance</p>
+                        <p>Realistic position with a defined salary range, concrete requirements, and legitimate employer branding.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section-card profile-card">
+                <div class="section-header">
+                    <div>
+                        <p class="section-label">Student Profile</p>
+                        <h2>Career suggestion tool</h2>
+                    </div>
+                    <span class="status-pill status-info">Career Path</span>
+                </div>
+                <form method="post" class="input-form">
+                    <input type="hidden" name="form_type" value="profile">
+                    <label>Your name</label>
+                    <input type="text" name="student_name" placeholder="Enter your name" value="{{ student_name }}">
+                    <label>Education</label>
+                    <input type="text" name="education" placeholder="e.g. Bachelor's in Computer Science" value="{{ education }}">
+                    <label>Skills</label>
+                    <input type="text" name="skills" placeholder="e.g. Python, UX, security" value="{{ skills }}">
+                    <label>Interests</label>
+                    <input type="text" name="interests" placeholder="e.g. cloud, design, data" value="{{ interests }}">
+                    <button type="submit" class="secondary-btn">Suggest Career</button>
+                </form>
+
+                {% if career_suggestion %}
+                <div class="result-card result-career">
+                    <p class="result-label">Suggested career</p>
+                    <h3>{{ career_suggestion }}</h3>
+                    <p>Use this suggestion as a starting point for internships, training, or your next professional step.</p>
+                </div>
+                {% endif %}
+
+                <div class="auto-suggestions">
+                    <h3>Automatic Job Suggestions</h3>
+                    <p>Based on common student profiles, here are some real job opportunities:</p>
+                    <ul>
+                        <li><strong>Software Developer Intern</strong> - Entry-level coding roles at tech companies.</li>
+                        <li><strong>Data Analyst Trainee</strong> - Learn analytics with real data projects.</li>
+                        <li><strong>UX Design Assistant</strong> - Assist in user experience design for digital products.</li>
+                        <li><strong>Cybersecurity Analyst</strong> - Monitor and protect digital assets.</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menuDropdown');
+            menu.classList.toggle('show');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const menu = document.getElementById('menuDropdown');
+            menu.classList.remove('show');
+        }
+
+        // Close menu when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.menu-btn')) {
+                const menu = document.getElementById('menuDropdown');
+                if (menu.classList.contains('show')) {
+                    menu.classList.remove('show');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
